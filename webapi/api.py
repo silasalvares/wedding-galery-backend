@@ -1,3 +1,4 @@
+import os
 from flask import Blueprint, request, jsonify, make_response
 from threading import Thread
 
@@ -31,11 +32,17 @@ def get_image(key):
 
 @api.route('/approve', methods=['GET'])
 def list_pedding_images():
+    if not request.headers.get('Password') == os.environ.get('PASSWORD'):
+        return jsonify({}), 403
+
     images = WeddingImageService().list_pending_images()
     return jsonify(WeddingImageSchema(many=True).dump(images))
 
 @api.route('/<key>/approve', methods=['POST'])
 def approve(key):
+    if not request.headers.get('Password') == os.environ.get('PASSWORD'):
+        return jsonify({}), 403
+
     image = WeddingImageService().approve_image(key)
     return jsonify(WeddingImageSchema().dump(image))
 
