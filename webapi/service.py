@@ -13,7 +13,7 @@ class WeddingImageService():
 
         image = WeddingImage()
         image.s3_key = image_key
-        image.url = os.environ.get('API_URL') + image_key + '/'
+        image.url = os.environ.get('API_URL') + '/' + image_key + '/'
         image.save()
         return image
 
@@ -30,8 +30,5 @@ class WeddingImageService():
         return wedding_image
 
     def get_image(self, s3_key):
-        images = WeddingImage.objects(s3_key=s3_key, approved=True)
-        if len(images) > 0:
-            return S3ImageHandler().get_image(s3_key)
-
-        return None
+        image = WeddingImage.objects(s3_key=s3_key).get()
+        return S3ImageHandler().get_image(s3_key)
